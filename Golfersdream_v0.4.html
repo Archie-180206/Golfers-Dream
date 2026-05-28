@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The golfers dream</title>
+
+  <style>
+    /* Basic page styles */
+    body {
+      font-family: Georgia, serif;
+      background-color: #f5f5f5;
+      background-image: url("bgk_image.jpg");
+      background-size: cover;
+      background-attachment: fixed;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Simple top bar */
+    .topbar {
+      background-color: #1a3a5c;
+      color: white;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    /* Main layout */
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    /* Cards */
+    .card {
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      margin-top: 0;
+      color: #1a3a5c;
+      font-size: 18px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+
+    /* Form styles */
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 4px;
+      margin-top: 12px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    input:focus { border-color: #2563a8; outline: none; }
+
+    /* Buttons */
+    .btn {
+      padding: 9px 18px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 14px;
+    }
+
+    .btn-primary { background-color: #1a3a5c; color: white; }
+    .btn-primary:hover { background-color: #2a4a6c; }
+
+    /* Error message */
+    .error-msg { color: red; font-size: 13px; margin-top: 6px; }
+
+    /* Sessions table */
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { background-color: #1a3a5c; color: white; padding: 10px 12px; text-align: left; }
+    td { padding: 10px 12px; border-bottom: 1px solid #eee; }
+    tr:hover { background-color: #f9f9f9; }
+
+    /* Auth forms */
+    .auth-wrap { max-width: 400px; margin: 60px auto; padding: 0 20px; }
+    .auth-wrap h1 { color: #1a3a5c; text-align: center; margin-bottom: 6px; }
+    .auth-wrap p { text-align: center; color: #666; font-size: 14px; margin-bottom: 24px; }
+
+    /* Hide/show pages */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* Stats row */
+    .stats-row { display: flex; gap: 16px; margin-bottom: 20px; }
+    .stat-box { background: white; border: 1px solid #ccc; border-radius: 6px; padding: 16px 20px; flex: 1; text-align: center; }
+    .stat-box .stat-num { font-size: 28px; font-weight: bold; color: #1a3a5c; }
+    .stat-box .stat-label { font-size: 12px; color: #888; margin-top: 4px; }
+  </style>
+</head>
+<body>
+
+<!-- PAGE: LOGIN -->
+<div class="page active" id="page-login">
+  <div class="auth-wrap">
+    <h1>📚 The golfers dream</h1>
+    <p>Log in to track your golf sessions.</p>
+    <div class="card">
+      <h2>Login</h2>
+      <label for="loginEmail">Email</label>
+      <input type="email" id="loginEmail" placeholder="your@email.com">
+      <label for="loginPassword">Password</label>
+      <input type="password" id="loginPassword" placeholder="Password">
+      <div class="error-msg" id="loginError" style="display:none"></div>
+      <button class="btn btn-primary" onclick="doLogin()">Sign In</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: DASHBOARD -->
+<div class="page" id="page-dashboard">
+  <div class="topbar">
+    <h1>📚 The golfers dream</h1>
+    <button class="btn btn-primary" onclick="doLogout()">Logout</button>
+  </div>
+  <div class="container">
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-num" id="statTotal">0</div><div class="stat-label">Total Sessions</div></div>
+    </div>
+
+    <div class="card">
+
+<label for="sessionDate">Date</label> 
+<input type="date" id="sessionDate"> 
+
+<label for="sessionSubject">⛳Course</label> 
+<input type="text" id="sessionSubject" placeholder="e.g. Practice/Playing"> 
+
+<label for="sessionMins">Strokes gained (auto‑calculated)</label> 
+<input type="number" id="sessionMins" readonly style="background:#eef;">
+
+<label for="sessionType">Session Type</label> 
+<select id="sessionType" class="form-control"> 
+    <option value="range">Driving Range</option> 
+    <option value="short">Short Game</option> 
+    <option value="putting">Putting Green</option> 
+    <option value="round">9/18 Holes</option> 
+</select>
+
+<label for="fairwaysHit">Fairways Hit</label>
+<input type="number" id="fairwaysHit" placeholder="e.g. 9">
+
+<label for="girHit">Green in Regulation (GIR)</label>
+<input type="number" id="girHit" placeholder="e.g. 12">
+
+<label for="totalPutts">Putts for the Round</label>
+<input type="number" id="totalPutts" placeholder="e.g. 30">
+
+<button class="btn btn-primary" onclick="addSession()">Save Session</button>
+    </div>
+
+    <div class="card">
+      <h2>My Sessions</h2>
+      <div id="sessionsContainer"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var currentUserId = 1;
+
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function doLogin() {
+    showPage('page-dashboard');
+    refreshDashboard();
+  }
+
+  function doLogout() {
+    showPage('page-login');
+  }
+
+  function addSession() {
+    alert("Session saved!");
+    refreshDashboard();
+  }
+
+  function refreshDashboard() {
+    var container = document.getElementById('sessionsContainer');
+    container.innerHTML = "<table><thead><tr><th>Date</th><th>Subject</th></tr></thead><tbody><tr><td>" +
+      document.getElementById('sessionDate').value +
+      "</td><td>Golf</td></tr></tbody></table>";
+  }
+
+  document.getElementById('sessionDate').value = new Date().toISOString().split('T')[0];
+
+  /* -------------------------------
+     LIVE STROKES GAINED CALCULATION
+  --------------------------------*/
+  document.getElementById("fairwaysHit").addEventListener("input", updateStrokesGained);
+  document.getElementById("girHit").addEventListener("input", updateStrokesGained);
+  document.getElementById("totalPutts").addEventListener("input", updateStrokesGained);
+
+  function updateStrokesGained() {
+    let fairways = parseInt(document.getElementById("fairwaysHit").value) || 0;
+    let gir = parseInt(document.getElementById("girHit").value) || 0;
+    let putts = parseInt(document.getElementById("totalPutts").value) || 0;
+
+    // Simple strokes gained model
+    let sg = 0;
+    sg += (fairways - 7) * 0.25;
+    sg += (gir - 10) * 0.35;
+    sg += (32 - putts) * 0.15;
+
+    document.getElementById("sessionMins").value = sg.toFixed(2);
+  }
+</script>
+
+</body>

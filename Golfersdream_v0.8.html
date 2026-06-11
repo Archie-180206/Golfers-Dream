@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The golfers dream</title>
+
+  <style>
+    body {
+      font-family: Georgia, serif;
+      background-color: #f5f5f5;
+      background-image: url("bgk_image.jpg");
+      background-size: cover;
+      background-attachment: fixed;
+      margin: 0;
+      padding: 0;
+    }
+
+    .topbar {
+      background-color: #1a3a5c;
+      color: white;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .card {
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      margin-top: 0;
+      color: #1a3a5c;
+      font-size: 18px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 4px;
+      margin-top: 12px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    input:focus { border-color: #2563a8; outline: none; }
+
+    .btn {
+      padding: 9px 18px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 14px;
+    }
+
+    .btn-primary { background-color: #1a3a5c; color: white; }
+    .btn-primary:hover { background-color: #2a4a6c; }
+    .btn-danger { background-color: #c9302c; color: white; padding: 4px 8px; font-size: 12px; margin-top: 0; }
+    .btn-danger:hover { background-color: #ac2925; }
+
+    .error-msg { color: #c9302c; font-size: 13px; margin-top: 10px; font-weight: bold; }
+    .success-msg { color: #2b7539; font-size: 13px; margin-top: 10px; font-weight: bold; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { background-color: #1a3a5c; color: white; padding: 10px 12px; text-align: left; }
+    td { padding: 10px 12px; border-bottom: 1px solid #eee; }
+    tr:hover { background-color: #f9f9f9; }
+
+    .auth-wrap { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+    .auth-wrap h1 { color: #1a3a5c; text-align: center; margin-bottom: 6px; }
+    .auth-wrap p { text-align: center; color: #666; font-size: 14px; margin-bottom: 24px; }
+    .auth-grid { display: flex; gap: 20px; flex-wrap: wrap; }
+    .auth-grid .card { flex: 1; min-width: 280px; }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .stats-row { display: flex; gap: 16px; margin-bottom: 20px; }
+    .stat-box { background: white; border: 1px solid #ccc; border-radius: 6px; padding: 16px 20px; flex: 1; text-align: center; }
+    .stat-box .stat-num { font-size: 28px; font-weight: bold; color: #1a3a5c; }
+    .stat-box .stat-label { font-size: 12px; color: #888; margin-top: 4px; }
+  </style>
+</head>
+<body>
+
+<!-- PAGE: AUTHENTICATION -->
+<div class="page active" id="page-auth">
+  <div class="auth-wrap">
+    <h1>📚 The golfers dream</h1>
+    <p>Sign in to your account or create a brand new one to start saving sessions.</p>
+    
+    <div class="auth-grid">
+      <!-- LOGIN SYSTEM BOX -->
+      <div class="card" id="box-login">
+        <h2>Sign In</h2>
+        <label for="loginEmail">Email Address</label>
+        <input type="email" id="loginEmail" placeholder="your@email.com">
+        
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" placeholder="Password">
+        
+        <div class="error-msg" id="loginError" style="display:none"></div>
+        
+        <button class="btn btn-primary" onclick="handleLogin()">Log In</button>
+      </div>
+
+      <!-- ACCOUNT CREATION BOX -->
+      <div class="card" id="box-register">
+        <h2>Create Account</h2>
+        <label for="regEmail">Choose Email Address</label>
+        <input type="email" id="regEmail" placeholder="player@email.com">
+        
+        <label for="regPassword">Choose Password</label>
+        <input type="password" id="regPassword" placeholder="Minimum 4 characters">
+        
+        <div class="error-msg" id="regError" style="display:none"></div>
+        <div class="success-msg" id="regSuccess" style="display:none"></div>
+        
+        <button class="btn btn-primary" onclick="handleRegister()">Register Account</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: DASHBOARD (STAT ENTRY) -->
+<div class="page" id="page-dashboard">
+  <div class="topbar">
+    <h1>📚 The golfers dream (<span id="userDisplay">Player</span>)</h1>
+    <button class="btn btn-primary" onclick="doLogout()">Logout</button>
+  </div>
+  <div class="container">
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-num" id="statTotal">0</div>
+        <div class="stat-label">Total Sessions</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Log Golf Session</h2>
+      <label for="sessionDate">Date</label>
+      <input type="date" id="sessionDate">
+
+      <label for="sessionSubject">⛳Course</label>
+      <input type="text" id="sessionSubject" placeholder="e.g. Pebble Beach">
+
+      <label for="sessionMins">Strokes gained (auto‑calculated)</label>
+      <input type="number" id="sessionMins" readonly value="0.00" style="background:#eef;">
+
+      <label for="sessionType">Session Type</label>
+      <select id="sessionType" class="form-control" onchange="updateStrokesGained()">
+        <option value="range">Driving Range</option>
+        <option value="short">Short Game</option>
+        <option value="putting">Putting Green</option>
+        <option value="round">9/18 Holes</option>
+      </select>
+
+      <label for="fairwaysHit">Fairways Hit</label>
+      <input type="number" id="fairwaysHit" placeholder="e.g. 9" oninput="updateStrokesGained()">
+
+      <label for="girHit">Green in Regulation (GIR)</label>
+      <input type="number" id="girHit" placeholder="e.g. 12" oninput="updateStrokesGained()">
+
+      <label for="totalPutts">Putts for the Round</label>
+      <input type="number" id="totalPutts" placeholder="e.g. 30" oninput="updateStrokesGained()">
+
+      <button class="btn btn-primary" onclick="addSession()">Save Session</button>
+    </div>
+
+    <div class="card">
+      <h2>My Sessions</h2>
+      <div id="sessionsContainer"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Dynamic User Tracking Context State
+  let currentUserEmail = null;
+
+  // Reliable client-side encoding calculation to allow desktop double-click execution
+  function encodePassword(password) {
+    let hash = 0;
+    for (let i = 0; i < password.length; i++) {
+      const char = password.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash |= 0; 
+    }
+    return 'user_pwd_' + hash;
+  }
+
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  // Account Creation System Implementation
+  function handleRegister() {
+    const email = document.getElementById('regEmail').value.trim().toLowerCase();
+    const password = document.getElementById('regPassword').value;
+    const errBox = document.getElementById('regError');
+    const succBox = document.getElementById('regSuccess');
+
+    errBox.style.display = 'none';
+    succBox.style.display = 'none';
+
+    if (!email || !password) {
+      errBox.innerText = 'Please complete both fields to register.';
+      errBox.style.display = 'block';
+      return;
+    }
+    if (password.length < 4) {
+      errBox.innerText = 'Password must be at least 4 characters long.';
+      errBox.style.display = 'block';
+      return;
+    }
+
+    let users = JSON.parse(localStorage.getItem('golfUsers')) || {};
+
+    if (users[email]) {
+      errBox.innerText = 'This email address is already registered.';
+      errBox.style.display = 'block';
+      return;
+    }
+
+    // Save user credentials data safely
+    users[email] = encodePassword(password);
+    localStorage.setItem('golfUsers', JSON.stringify(users));
+
+    succBox.innerText = 'Account created successfully! Try logging in now.';
+    succBox.style.display = 'block';
+    
+    document.getElementById('regEmail').value = '';
+    document.getElementById('regPassword').value = '';
+  }
+
+  // Login System Verification Core
+  function handleLogin() {
+    const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+    const password = document.getElementById('loginPassword').value;
+    const errBox = document.getElementById('loginError');
+
+    errBox.style.display = 'none';
+
+    if (!email || !password) {
+      errBox.innerText = 'Please supply your email and password.';
+      errBox.style.display = 'block';
+      return;
+    }
+
+    let users = JSON.parse(localStorage.getItem('golfUsers')) || {};
+    const enteredPasswordEncoded = encodePassword(password);
+
+    if (!users[email] || users[email] !== enteredPasswordEncoded) {
+      errBox.innerText = 'Access denied. Incorrect credentials.';
+      errBox.style.display = 'block';
+      return;
+    }
+
+    // Assign session validation tracking context details
+    currentUserEmail = email;
+    document.getElementById('userDisplay').innerText = email;
+    
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPassword').value = '';
+
+    // Route view straight to dashboard setup
+    showPage('page-dashboard');
+    refreshDashboard();
+  }
+
+  function doLogout() {
+    currentUserEmail = null;
+    showPage('page-auth');
+  }
+
+  function getUserSessions() {
+    if (!currentUserEmail) return [];
+    let allSessions = JSON.parse(localStorage.getItem("golfSessionsMultiUser")) || {};}
